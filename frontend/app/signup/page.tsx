@@ -1,8 +1,18 @@
 'use client'
 import Link from "next/link"
 import { useState } from "react"
+import { useMutation } from "react-query"
+import { signIn } from "../api/api"
+import toast from "react-hot-toast"
+import { useRouter } from 'next/navigation';
+import { useDispatch } from "react-redux"
+import {signInRedux} from "../redux/authSlice"
 
 const page = () => {
+
+    const router = useRouter()
+
+    const dispatch = useDispatch()
 
     const [data, setData] = useState({
         fname: "",
@@ -10,18 +20,53 @@ const page = () => {
         email: "",
         password: "",
     })
-     
+
+    const { mutate } = useMutation(['login'], signIn, {
+        onSuccess: res => {
+            toast(res?.data.message)
+            if (res?.data.alert) {
+                router.push("/")
+                dispatch(signInRedux(res?.data))
+                console.log(res.data)
+            }
+        },
+        onError: error => {
+            console.log(error)
+        }
+    })
+
     const [profile, setProfile] = useState('')
 
     const handleChange = (e: any) => {
-        const {name, value} = e.target;
-        setData({...data, [name]: value})
-        console.log(data)
+        const { name, value } = e.target;
+        setData({ ...data, [name]: value })
+        // console.log(data)
     }
 
+    const clickImage = (e: any) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(e.target.files[0])
+    
+        reader.onload = () => {
+          const result = reader.result as string
+          setProfile(result)
+          setData((prev: any) => {
+            return {
+              ...prev,
+              profile: result
+            }
+          })
+        }
+      }
+
     const submitData = (e: any) => {
+   const {fname, lname, password, email} = data
+        // if(!fname || !lname || !password || email){
+        //     toast("please fill all input field")
+        // }
         e.preventDefault()
-     console.log("hellooo",profile)
+        // console.log(data, profile)
+        mutate({data, profile})
     }
 
     return (
@@ -35,8 +80,8 @@ const page = () => {
                         type="text"
                         name="fname"
                         value={data.fname}
-                        onChange={handleChange}                   
-                        />
+                        onChange={handleChange}
+                    />
                 </div>
 
                 <div className='flex flex-col'>
@@ -45,8 +90,8 @@ const page = () => {
                         type="text"
                         name="lname"
                         value={data.lname}
-                        onChange={ handleChange}                    
-                        />
+                        onChange={handleChange}
+                    />
                 </div>
 
                 <div className='flex flex-col'>
@@ -72,7 +117,7 @@ const page = () => {
                 <div className='flex flex-col'>
                     <label htmlFor="image">Profile Image</label>
                     <input className="py-2 px-3 w-[400px] border shadow-md"
-                        onChange={(e: any) => setProfile(e.target.files[0])}
+                        onChange={clickImage}
                         type="file"
                         name="profile"
                     />
