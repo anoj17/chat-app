@@ -21,8 +21,6 @@ const userSchema = mongoose.Schema({
     },
     profile: {
         type: String,
-        default: 
-            "https://cdn-icons-png.freepik.com/512/266/266033.png"
     },
 },
     {timestamps: true}
