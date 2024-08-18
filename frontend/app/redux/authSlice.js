@@ -4,7 +4,8 @@ import { createSlice } from "@reduxjs/toolkit"
 const initialState = {
     isAuthentication: false,
     access_token: null,
-    user: null
+    user: null,
+    allUser: []
 }
 
 export const authSlice = createSlice({
@@ -17,9 +18,14 @@ export const authSlice = createSlice({
             state.user= action.payload
             state.isAuthentication = true
             // state.access_token = action.payload.
+        },
+
+        allUserRedux: (state, action) => {
+            // console.log(action.payload)
+           state.allUser = action.payload
         }
     }
 })
 
-export const {signInRedux} = authSlice.actions
+export const {signInRedux, allUserRedux} = authSlice.actions
 export default authSlice.reducer

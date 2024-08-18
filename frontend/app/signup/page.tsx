@@ -27,7 +27,7 @@ const page = () => {
             if (res?.data.alert) {
                 router.push("/")
                 dispatch(signInRedux(res?.data))
-                console.log(res.data)
+                // console.log(res.data)
             }
         },
         onError: error => {

@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import { login } from "./api/api";
 import toast from "react-hot-toast"
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [showPwd, setShowPwd] = useState(false)
@@ -14,26 +15,29 @@ export default function Home() {
     password: ''
   })
 
-  const userDetails = useSelector((state: any)=> state?.auth?.user?.data)
+  const userDetails = useSelector((state: any) => state?.auth?.user?.data)
 
-  const navigate = useNavigate()
+  const router = useRouter()
 
   // console.log(userDetails?.profile)
 
   const handleChange = (e: any) => {
-    const {name, value} = e.target
+    const { name, value } = e.target
 
-    setData({...data, [name]: value})
+    setData({ ...data, [name]: value })
   }
 
-  const {mutate} = useMutation(['signIn'], login, {
-     onSuccess: res => {
-      console.log(res?.data)
+  const { mutate } = useMutation(['signIn'], login, {
+    onSuccess: res => {
+      // console.log(res?.data)
       toast(res?.data?.message)
-     },
-     onError: error => {
+      if (res?.data?.alert == true) {
+        router.push('/home')
+      }
+    },
+    onError: error => {
       console.log(error)
-     }
+    }
   })
 
   const submitHandle = (e: any) => {
@@ -47,9 +51,9 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <form onSubmit={submitHandle} className="flex flex-col space-y-3 px-16 py-7 bg-white rounded-xl shadow drop-shadow-md">
         {
-          userDetails && 
+          userDetails &&
           <div className="flex justify-center items-center">
-          <img src={userDetails?.profile} className='h-11 w-11 rounded-full'/>
+            <img src={userDetails?.profile} className='h-11 w-11 rounded-full' />
           </div>
         }
         <h1 className="text-center text-lg font-medium">Sign In</h1>
@@ -69,7 +73,7 @@ export default function Home() {
           <label htmlFor="password">Password</label>
           <div className=" flex items-center">
             <input className="py-2 px-3 w-[400px] border shadow-md"
-              type={!showPwd ? 'password': "text"}
+              type={!showPwd ? 'password' : "text"}
               name="password"
               value={data.password}
               onChange={handleChange}

@@ -4,7 +4,7 @@ const URL = process.env.NEXT_PUBLIC_URL
 
 export const signIn = async (data: any) => {
     try {
-        // console.log(data)
+        console.log(data)
         return await axios.post(`${URL}/api/user/signup`, data,)
         // {
         //     headers: {
@@ -29,5 +29,14 @@ export const login = async (data: any) => {
 
     } catch (error) {
         console.log("backend error", error)
+    }
+}
+
+export const allUsers = async () => {
+    try{
+        return await axios.get(`${URL}/api/user/alluser`)
+    }
+    catch(error){
+        console.log(error)
     }
 }
